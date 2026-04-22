@@ -5,6 +5,7 @@ node_modules/
 
 # Env
 .env
+.env.example
 .env.local
 .env*.local
 
