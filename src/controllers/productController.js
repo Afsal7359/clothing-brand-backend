@@ -1,11 +1,13 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../models/Product.js';
+import Collection from '../models/Collection.js';
 
 export const listProducts = asyncHandler(async (req, res) => {
   const {
     q,
     category,
     collection,
+    collectionSlug,
     minPrice,
     maxPrice,
     featured,
@@ -20,6 +22,11 @@ export const listProducts = asyncHandler(async (req, res) => {
   if (q) filter.title = { $regex: q, $options: 'i' };
   if (category) filter.category = category;
   if (collection) filter.collections = collection;
+  if (collectionSlug) {
+    const col = await Collection.findOne({ slug: collectionSlug });
+    if (col) filter.collections = col._id;
+    else filter.collections = null; // no results
+  }
   if (featured === 'true') filter.isFeatured = true;
   if (isNew === 'true') filter.isNew = true;
   if (minPrice || maxPrice) {
@@ -41,12 +48,42 @@ export const getProduct = asyncHandler(async (req, res) => {
   const { idOrSlug } = req.params;
   const isId = idOrSlug.match(/^[0-9a-fA-F]{24}$/);
   const product = await Product.findOne(isId ? { _id: idOrSlug } : { slug: idOrSlug })
-    .populate('collections', 'title slug');
+    .populate('collections', 'title slug')
+    .populate('relatedProducts', 'title slug images price compareAtPrice category isNew');
   if (!product) {
     res.status(404);
     throw new Error('Product not found');
   }
-  res.json(product);
+
+  // If no related products set, fall back to same-category products
+  let related = product.relatedProducts || [];
+  if (related.length === 0) {
+    related = await Product.find({
+      category: product.category,
+      _id: { $ne: product._id },
+      status: 'active',
+    }).limit(8).select('title slug images price compareAtPrice category isNew');
+  }
+
+  res.json({ ...product.toJSON(), relatedProducts: related });
+});
+
+// GET /api/products/category-images — one representative image per category
+export const categoryImages = asyncHandler(async (req, res) => {
+  const CATS = ['tshirts','hoodies','jackets','shirts','sweatshirts','polos','pants','shorts','caps','bags','other'];
+  const results = await Promise.all(
+    CATS.map(async (cat) => {
+      const p = await Product.findOne({ category: cat, status: 'active', 'images.0': { $exists: true } })
+        .sort({ isFeatured: -1, createdAt: -1 })
+        .select('images')
+        .lean();
+      return { category: cat, image: p?.images?.[0] || '' };
+    })
+  );
+  // Return as a map { tshirts: "url", ... }
+  const map = {};
+  results.forEach(({ category, image }) => { map[category] = image; });
+  res.json(map);
 });
 
 export const createProduct = asyncHandler(async (req, res) => {

@@ -11,7 +11,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'northverse',
+    folder: 'underdwag',
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'bmp', 'tiff', 'svg', 'heic', 'heif'],
     transformation: [{ quality: 'auto', fetch_format: 'auto' }],
   },

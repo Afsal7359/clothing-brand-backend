@@ -26,9 +26,20 @@ const addressSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const trackingEventSchema = new mongoose.Schema(
+  {
+    status: { type: String, required: true },
+    message: { type: String, default: '' },
+    location: { type: String, default: '' },
+    timestamp: { type: Date, default: Date.now },
+  },
+  { _id: true }
+);
+
 const orderSchema = new mongoose.Schema(
   {
     orderNumber: { type: String, unique: true, index: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     email: { type: String, required: true, lowercase: true },
     items: [orderItemSchema],
     shippingAddress: addressSchema,
@@ -39,8 +50,12 @@ const orderSchema = new mongoose.Schema(
     discount: { type: Number, default: 0 },
     total: { type: Number, required: true },
 
+    couponCode: { type: String, default: '' },
+    couponDiscount: { type: Number, default: 0 },
+
     paymentMethod: { type: String, enum: ['cod', 'card', 'upi', 'netbanking'], default: 'cod' },
     paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
+    paymentIntentId: { type: String, default: '' },
 
     status: {
       type: String,
@@ -49,6 +64,7 @@ const orderSchema = new mongoose.Schema(
       index: true,
     },
     notes: { type: String, default: '' },
+    trackingEvents: [trackingEventSchema],
   },
   { timestamps: true }
 );

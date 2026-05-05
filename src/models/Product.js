@@ -31,6 +31,7 @@ const productSchema = new mongoose.Schema(
     variants: [variantSchema],
 
     collections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Collection' }],
+    relatedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
 
     status: { type: String, enum: ['active', 'draft', 'archived'], default: 'active', index: true },
     isFeatured: { type: Boolean, default: false },
@@ -42,15 +43,22 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-productSchema.pre('validate', function (next) {
+productSchema.pre('save', async function (next) {
   if (this.isModified('title') || !this.slug) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
+    const base = slugify(this.title, { lower: true, strict: true });
+    let slug = base;
+    let i = 1;
+    // Increment suffix until the slug is unique (handles bulk inserts with same title)
+    while (await mongoose.model('Product').exists({ slug, _id: { $ne: this._id } })) {
+      slug = `${base}-${i++}`;
+    }
+    this.slug = slug;
   }
   next();
 });
 
 productSchema.virtual('inStock').get(function () {
-  return this.variants.reduce((sum, v) => sum + (v.stock || 0), 0) > 0;
+  return (this.variants || []).reduce((sum, v) => sum + (v.stock || 0), 0) > 0;
 });
 
 productSchema.set('toJSON', { virtuals: true });

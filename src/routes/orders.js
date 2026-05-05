@@ -1,17 +1,24 @@
 import { Router } from 'express';
-import { protect } from '../middleware/auth.js';
+import { protect, userAuth, softUserAuth } from '../middleware/auth.js';
 import {
   createOrder,
   listOrders,
   getOrder,
   updateOrderStatus,
+  myOrders,
+  myOrderDetail,
 } from '../controllers/orderController.js';
 
 const router = Router();
 
-router.post('/', createOrder);
-router.get('/', protect, listOrders);
-router.get('/:id', protect, getOrder);
-router.patch('/:id/status', protect, updateOrderStatus);
+// User-facing
+router.post('/',               userAuth, createOrder);
+router.get('/my',              userAuth, myOrders);
+router.get('/my/:id',          userAuth, myOrderDetail);
+
+// Admin
+router.get('/',                protect, listOrders);
+router.get('/:id',             protect, getOrder);
+router.patch('/:id/status',    protect, updateOrderStatus);
 
 export default router;
