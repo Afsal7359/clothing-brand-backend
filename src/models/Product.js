@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema(
     description: { type: String, default: '' },
     price: { type: Number, required: true, min: 0 },
     compareAtPrice: { type: Number, min: 0 },
-    currency: { type: String, default: 'INR' },
+    currency: { type: String, default: 'GBP' },
 
     images: [{ type: String }],
 

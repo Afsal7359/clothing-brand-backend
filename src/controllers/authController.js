@@ -187,9 +187,8 @@ export const forgotPassword = async (req, res) => {
     if (!email) return res.status(400).json({ message: 'Email required' });
 
     const user = await User.findOne({ email });
-    // Always respond the same to avoid email enumeration
     if (!user || !user.isVerified) {
-      return res.json({ message: 'If that email is registered, a reset code has been sent.' });
+      return res.status(404).json({ message: 'No account found with that email address.' });
     }
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
@@ -198,7 +197,7 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     await sendOtp(email, otp, 'Reset your underdwag password');
-    res.json({ message: 'If that email is registered, a reset code has been sent.' });
+    res.json({ message: 'Reset code sent.' });
   } catch (err) {
     console.error('forgotPassword error', err);
     res.status(500).json({ message: 'Server error' });

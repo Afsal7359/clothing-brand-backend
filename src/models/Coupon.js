@@ -41,7 +41,7 @@ couponSchema.methods.isValid = function (orderAmount, userIdOrEmail) {
   if (this.expiryDate && now > this.expiryDate) return { ok: false, msg: 'Coupon has expired' };
 
   if (orderAmount < this.minOrderAmount)
-    return { ok: false, msg: `Minimum order amount is ₹${this.minOrderAmount}` };
+    return { ok: false, msg: `Minimum order amount is £${this.minOrderAmount}` };
 
   if (this.maxUses !== null && this.usedCount >= this.maxUses)
     return { ok: false, msg: 'Coupon usage limit reached' };

@@ -77,7 +77,7 @@ const itemsTable = (items, uploadsUrl = '') => `
           ${it.title}${it.size ? ` <span style="color:#999;font-size:12px">(${it.size})</span>` : ''}
         </td>
         <td style="padding:12px;border-bottom:1px solid #f5f5f5;font-size:14px;color:#333;text-align:center">${it.quantity}</td>
-        <td style="padding:12px;border-bottom:1px solid #f5f5f5;font-size:14px;color:#333;text-align:right;white-space:nowrap">₹${(it.price * it.quantity).toLocaleString('en-IN')}</td>
+        <td style="padding:12px;border-bottom:1px solid #f5f5f5;font-size:14px;color:#333;text-align:right;white-space:nowrap">£${(it.price * it.quantity).toLocaleString('en-GB')}</td>
       </tr>`;
     }).join('')}
   </tbody>
@@ -87,20 +87,20 @@ const totalsBlock = (order) => `
 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
   <tr>
     <td style="font-size:13px;color:#555;padding:4px 0">Subtotal</td>
-    <td style="font-size:13px;color:#555;text-align:right;padding:4px 0">₹${order.subtotal.toLocaleString('en-IN')}</td>
+    <td style="font-size:13px;color:#555;text-align:right;padding:4px 0">£${order.subtotal.toLocaleString('en-GB')}</td>
   </tr>
   <tr>
     <td style="font-size:13px;color:#555;padding:4px 0">Shipping</td>
-    <td style="font-size:13px;color:#555;text-align:right;padding:4px 0">${order.shippingFee === 0 ? 'Free' : `₹${order.shippingFee}`}</td>
+    <td style="font-size:13px;color:#555;text-align:right;padding:4px 0">${order.shippingFee === 0 ? 'Free' : `£${order.shippingFee}`}</td>
   </tr>
   ${order.couponDiscount > 0 ? `
   <tr>
     <td style="font-size:13px;color:#16a34a;padding:4px 0">Coupon (${order.couponCode})</td>
-    <td style="font-size:13px;color:#16a34a;text-align:right;padding:4px 0">−₹${order.couponDiscount.toLocaleString('en-IN')}</td>
+    <td style="font-size:13px;color:#16a34a;text-align:right;padding:4px 0">−£${order.couponDiscount.toLocaleString('en-GB')}</td>
   </tr>` : ''}
   <tr>
     <td style="font-size:16px;font-weight:700;color:#111;padding:12px 0 4px;border-top:2px solid #111">Total</td>
-    <td style="font-size:16px;font-weight:700;color:#111;text-align:right;padding:12px 0 4px;border-top:2px solid #111">₹${order.total.toLocaleString('en-IN')}</td>
+    <td style="font-size:16px;font-weight:700;color:#111;text-align:right;padding:12px 0 4px;border-top:2px solid #111">£${order.total.toLocaleString('en-GB')}</td>
   </tr>
 </table>`;
 
@@ -159,7 +159,7 @@ export const sendAdminOrderNotification = async (order) => {
   await getTransporter().sendMail({
     from: `"underdwag orders" <${process.env.SMTP_USER}>`,
     to: adminEmail,
-    subject: `New Order — ${order.orderNumber} — ₹${order.total.toLocaleString('en-IN')}`,
+    subject: `New Order — ${order.orderNumber} — £${order.total.toLocaleString('en-GB')}`,
     html: wrap(`
       <h2 style="font-size:22px;color:#111;margin-top:0">New order received</h2>
       <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px">
@@ -181,7 +181,7 @@ export const sendAdminOrderNotification = async (order) => {
         </tr>
         <tr>
           <td style="font-size:13px;color:#555;padding:3px 0">Total</td>
-          <td style="font-size:16px;font-weight:700;color:#111;text-align:right">₹${order.total.toLocaleString('en-IN')}</td>
+          <td style="font-size:16px;font-weight:700;color:#111;text-align:right">£${order.total.toLocaleString('en-GB')}</td>
         </tr>
       </table>
 

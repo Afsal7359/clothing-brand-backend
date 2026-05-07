@@ -5,11 +5,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 // ── CREATE PAYMENT INTENT ────────────────────────────────────────────────────
 export const createPaymentIntent = async (req, res) => {
   try {
-    const { amount, currency = 'inr', metadata = {} } = req.body;
+    const { amount, currency = 'gbp', metadata = {} } = req.body;
     if (!amount || amount < 1) return res.status(400).json({ message: 'Invalid amount' });
 
     const intent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // paise
+      amount: Math.round(amount * 100), // pence
       currency,
       automatic_payment_methods: { enabled: true },
       metadata,
