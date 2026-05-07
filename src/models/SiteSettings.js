@@ -12,6 +12,8 @@ const siteSettingsSchema = new Schema({
   },
   stories: [{ label: String, image: String, href: String }],
   stores:  [{ city: String, address: String, image: String, directionsUrl: String, phone: String, isOpen: { type: Boolean, default: true } }],
+  announcements: [{ type: String }],
+  marquee:       [{ type: String }],
   craft: {
     image:    { type: String, default: '' },
     products: [{
@@ -24,6 +26,7 @@ const siteSettingsSchema = new Schema({
       isNew:          { type: Boolean },
     }],
   },
+  shippingInfo: [{ type: String }],
 }, { timestamps: true });
 
 export default mongoose.model('SiteSettings', siteSettingsSchema);

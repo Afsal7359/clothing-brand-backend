@@ -21,7 +21,19 @@ const DEFAULTS = {
     { label: 'press',       image: 'https://picsum.photos/seed/story8/200/200', href: '/collections' },
   ],
   stores: [],
+  announcements: [
+    'Free shipping on orders above £250',
+    'New Drop — Latest collection live',
+    '7-day easy returns & exchanges',
+  ],
+  marquee: ['Free Shipping', 'New Drop', 'London Streetwear', 'Premium Streetwear', 'Unisex Fits', 'Limited Edition'],
   craft: { image: '', products: [] },
+  shippingInfo: [
+    'Free shipping on orders above £250',
+    '7-day easy returns & exchanges',
+    'UK delivery 2–5 working days',
+    'Secure payments with Stripe',
+  ],
 };
 
 // GET /api/settings  — public, find-or-create singleton
@@ -33,15 +45,18 @@ export const getSettings = asyncHandler(async (req, res) => {
 
 // PUT /api/admin/settings  — protected
 export const updateSettings = asyncHandler(async (req, res) => {
-  const { hero, stories, stores, craft } = req.body;
+  const { hero, stories, stores, craft, announcements, marquee, shippingInfo } = req.body;
   let s = await SiteSettings.findOne();
   if (!s) {
-    s = await SiteSettings.create({ hero, stories, stores, craft });
+    s = await SiteSettings.create({ hero, stories, stores, craft, announcements, marquee });
   } else {
-    if (hero    !== undefined) s.hero    = hero;
-    if (stories !== undefined) s.stories = stories;
-    if (stores  !== undefined) s.stores  = stores;
-    if (craft   !== undefined) s.craft   = craft;
+    if (hero          !== undefined) s.hero          = hero;
+    if (stories       !== undefined) s.stories       = stories;
+    if (stores        !== undefined) s.stores        = stores;
+    if (craft         !== undefined) s.craft         = craft;
+    if (announcements !== undefined) s.announcements = announcements;
+    if (marquee       !== undefined) s.marquee       = marquee;
+    if (shippingInfo  !== undefined) s.shippingInfo  = shippingInfo;
     await s.save();
   }
   res.json(s);

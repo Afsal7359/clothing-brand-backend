@@ -21,7 +21,7 @@ const addressSchema = new mongoose.Schema(
     city: { type: String, required: true },
     state: { type: String, required: true },
     postalCode: { type: String, required: true },
-    country: { type: String, default: 'India' },
+    country: { type: String, default: 'United Kingdom' },
   },
   { _id: false }
 );
@@ -53,7 +53,7 @@ const orderSchema = new mongoose.Schema(
     couponCode: { type: String, default: '' },
     couponDiscount: { type: Number, default: 0 },
 
-    paymentMethod: { type: String, enum: ['cod', 'card', 'upi', 'netbanking'], default: 'cod' },
+    paymentMethod: { type: String, enum: ['cod', 'card', 'upi', 'netbanking', 'bank_transfer'], default: 'cod' },
     paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
     paymentIntentId: { type: String, default: '' },
 
