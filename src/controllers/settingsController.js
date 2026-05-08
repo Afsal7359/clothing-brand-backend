@@ -28,6 +28,25 @@ const DEFAULTS = {
   ],
   marquee: ['Free Shipping', 'New Drop', 'London Streetwear', 'Premium Streetwear', 'Unisex Fits', 'Limited Edition'],
   craft: { image: '', products: [] },
+  pages: {
+    contact:  { email: 'support@northverse.com', whatsappHref: '', hours: 'Mon–Sat, 10am–6pm GMT' },
+    faq:      { supportHours: 'Mon–Sat · 10am–6pm GMT · Reply within 24 hours' },
+    shipping: { standardPrice: '£3.99', standardTime: '3–5 working days', expressPrice: '£6.99', expressTime: '1–2 working days', freeThreshold: '£250', cutoffTime: '2pm GMT' },
+    returns:  { email: 'support@northverse.com', windowDays: '7', refundDays: '5–7' },
+  },
+  footer: {
+    description:   'Premium streetwear. New drops every season.',
+    instagramUrl:  '',
+    whatsappUrl:   '',
+    copyrightText: '',
+    supportLinks: [
+      { label: 'Track Order',          href: '/track-order' },
+      { label: 'Returns & Exchanges',  href: '/returns' },
+      { label: 'Shipping',             href: '/shipping' },
+      { label: 'FAQ',                  href: '/faq' },
+      { label: 'Contact',              href: '/contact' },
+    ],
+  },
   shippingInfo: [
     'Free shipping on orders above £250',
     '7-day easy returns & exchanges',
@@ -45,10 +64,10 @@ export const getSettings = asyncHandler(async (req, res) => {
 
 // PUT /api/admin/settings  — protected
 export const updateSettings = asyncHandler(async (req, res) => {
-  const { hero, stories, stores, craft, announcements, marquee, shippingInfo } = req.body;
+  const { hero, stories, stores, craft, announcements, marquee, shippingInfo, footer, pages } = req.body;
   let s = await SiteSettings.findOne();
   if (!s) {
-    s = await SiteSettings.create({ hero, stories, stores, craft, announcements, marquee });
+    s = await SiteSettings.create({ hero, stories, stores, craft, announcements, marquee, footer });
   } else {
     if (hero          !== undefined) s.hero          = hero;
     if (stories       !== undefined) s.stories       = stories;
@@ -57,6 +76,8 @@ export const updateSettings = asyncHandler(async (req, res) => {
     if (announcements !== undefined) s.announcements = announcements;
     if (marquee       !== undefined) s.marquee       = marquee;
     if (shippingInfo  !== undefined) s.shippingInfo  = shippingInfo;
+    if (footer        !== undefined) s.footer        = footer;
+    if (pages         !== undefined) s.pages         = pages;
     await s.save();
   }
   res.json(s);
