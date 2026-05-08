@@ -14,14 +14,14 @@ router.put('/settings', protect, updateSettings);
 // Direct-upload signature — browser uploads straight to Cloudinary, no double-hop
 router.get('/upload-signature', protect, (req, res) => {
   const timestamp = Math.round(Date.now() / 1000);
-  const params    = { folder: 'underdwag', timestamp };
+  const params = { folder: 'underdawg', timestamp };
   const signature = cloudinary.utils.api_sign_request(params, process.env.CLOUDINARY_API_SECRET);
   res.json({
     signature,
     timestamp,
-    api_key:    process.env.CLOUDINARY_API_KEY,
+    api_key: process.env.CLOUDINARY_API_KEY,
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    folder:     'underdwag',
+    folder: 'underdawg',
   });
 });
 

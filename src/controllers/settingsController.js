@@ -59,6 +59,7 @@ const DEFAULTS = {
 export const getSettings = asyncHandler(async (req, res) => {
   let s = await SiteSettings.findOne();
   if (!s) s = await SiteSettings.create(DEFAULTS);
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.json(s);
 });
 

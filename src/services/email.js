@@ -14,7 +14,7 @@ export const getTransporter = () => {
   return _transporter;
 };
 
-const brand = `<span style="font-family:Georgia,serif;letter-spacing:0.15em;font-weight:700">underdwag</span>`;
+const brand = `<span style="font-family:Georgia,serif;letter-spacing:0.15em;font-weight:700">underdawg</span>`;
 
 const wrap = (body) => `
 <!DOCTYPE html>
@@ -32,7 +32,7 @@ const wrap = (body) => `
         <tr><td style="padding:40px">${body}</td></tr>
         <tr>
           <td style="background:#f9f9f9;padding:20px 40px;text-align:center;border-top:1px solid #eee">
-            <p style="margin:0;font-size:12px;color:#999">© ${new Date().getFullYear()} underdwag. All rights reserved.</p>
+            <p style="margin:0;font-size:12px;color:#999">© ${new Date().getFullYear()} underdawg. All rights reserved.</p>
           </td>
         </tr>
       </table>
@@ -42,9 +42,9 @@ const wrap = (body) => `
 </html>`;
 
 /* ── OTP ─────────────────────────────────────────────────────────────────── */
-export const sendOtp = async (email, otp, subject = 'Your underdwag verification code') => {
+export const sendOtp = async (email, otp, subject = 'Your underdawg verification code') => {
   await getTransporter().sendMail({
-    from: `"underdwag" <${process.env.SMTP_USER}>`,
+    from: `"underdawg" <${process.env.SMTP_USER}>`,
     to: email,
     subject,
     html: wrap(`
@@ -67,10 +67,10 @@ const itemsTable = (items, uploadsUrl = '') => `
   </thead>
   <tbody>
     ${items.map((it) => {
-      const imgSrc = it.image
-        ? (it.image.startsWith('http') ? it.image : `${uploadsUrl}${it.image}`)
-        : '';
-      return `
+  const imgSrc = it.image
+    ? (it.image.startsWith('http') ? it.image : `${uploadsUrl}${it.image}`)
+    : '';
+  return `
       <tr>
         <td style="padding:12px;border-bottom:1px solid #f5f5f5;font-size:14px;color:#333">
           ${imgSrc ? `<img src="${imgSrc}" width="48" height="60" style="object-fit:cover;border-radius:3px;vertical-align:middle;margin-right:10px">` : ''}
@@ -79,7 +79,7 @@ const itemsTable = (items, uploadsUrl = '') => `
         <td style="padding:12px;border-bottom:1px solid #f5f5f5;font-size:14px;color:#333;text-align:center">${it.quantity}</td>
         <td style="padding:12px;border-bottom:1px solid #f5f5f5;font-size:14px;color:#333;text-align:right;white-space:nowrap">£${(it.price * it.quantity).toLocaleString('en-GB')}</td>
       </tr>`;
-    }).join('')}
+}).join('')}
   </tbody>
 </table>`;
 
@@ -117,7 +117,7 @@ const addressBlock = (addr) => `
 export const sendOrderConfirmation = async (order) => {
   const uploadsUrl = process.env.UPLOADS_URL || process.env.NEXT_PUBLIC_UPLOADS_URL || 'http://localhost:5005';
   await getTransporter().sendMail({
-    from: `"underdwag" <${process.env.SMTP_USER}>`,
+    from: `"underdawg" <${process.env.SMTP_USER}>`,
     to: order.email,
     subject: `Order Confirmed — ${order.orderNumber}`,
     html: wrap(`
@@ -157,7 +157,7 @@ export const sendAdminOrderNotification = async (order) => {
   if (!adminEmail) return;
 
   await getTransporter().sendMail({
-    from: `"underdwag orders" <${process.env.SMTP_USER}>`,
+    from: `"underdawg orders" <${process.env.SMTP_USER}>`,
     to: adminEmail,
     subject: `New Order — ${order.orderNumber} — £${order.total.toLocaleString('en-GB')}`,
     html: wrap(`

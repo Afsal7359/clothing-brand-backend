@@ -9,7 +9,7 @@ async function run() {
   await connectDB();
 
   // Admin
-  const email = process.env.ADMIN_EMAIL || 'admin@underdwag.com';
+  const email = process.env.ADMIN_EMAIL || 'admin@underdawg.com';
   const existing = await Admin.findOne({ email });
   if (!existing) {
     await Admin.create({

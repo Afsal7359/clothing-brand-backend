@@ -196,7 +196,7 @@ export const forgotPassword = async (req, res) => {
     user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
 
-    await sendOtp(email, otp, 'Reset your underdwag password');
+    await sendOtp(email, otp, 'Reset your underdawg password');
     res.json({ message: 'Reset code sent.' });
   } catch (err) {
     console.error('forgotPassword error', err);

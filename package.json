@@ -1,7 +1,7 @@
 {
-  "name": "underdwag-backend",
+  "name": "underdawg-backend",
   "version": "1.0.0",
-  "description": "Express + MongoDB backend for underdwag ecommerce",
+  "description": "Express + MongoDB backend for underdawg ecommerce",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
