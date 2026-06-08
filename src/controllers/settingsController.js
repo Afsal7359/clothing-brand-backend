@@ -57,9 +57,9 @@ const DEFAULTS = {
 
 // GET /api/settings  — public, find-or-create singleton
 export const getSettings = asyncHandler(async (req, res) => {
-  let s = await SiteSettings.findOne();
-  if (!s) s = await SiteSettings.create(DEFAULTS);
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  let s = await SiteSettings.findOne().lean();
+  if (!s) s = (await SiteSettings.create(DEFAULTS)).toObject();
+  res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=300');
   res.json(s);
 });
 

@@ -2,6 +2,12 @@ import asyncHandler from 'express-async-handler';
 import Product from '../models/Product.js';
 import Collection from '../models/Collection.js';
 
+// .lean() returns plain objects without Mongoose virtuals — recompute inStock.
+const withInStock = (p) => ({
+  ...p,
+  inStock: (p.variants || []).reduce((s, v) => s + (v.stock || 0), 0) > 0,
+});
+
 export const listProducts = asyncHandler(async (req, res) => {
   const {
     q,
@@ -36,11 +42,16 @@ export const listProducts = asyncHandler(async (req, res) => {
   }
 
   const skip = (Number(page) - 1) * Number(limit);
-  const [items, total] = await Promise.all([
-    Product.find(filter).sort(sort).skip(skip).limit(Number(limit)).populate('collections', 'title slug'),
+  const [rawItems, total] = await Promise.all([
+    Product.find(filter).sort(sort).skip(skip).limit(Number(limit))
+      .populate('collections', 'title slug').lean(),
     Product.countDocuments(filter),
   ]);
 
+  // .lean() skips virtuals — recompute inStock the frontend relies on.
+  const items = rawItems.map(withInStock);
+
+  res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
   res.json({ items, total, page: Number(page), pages: Math.ceil(total / Number(limit)) });
 });
 
@@ -49,7 +60,8 @@ export const getProduct = asyncHandler(async (req, res) => {
   const isId = idOrSlug.match(/^[0-9a-fA-F]{24}$/);
   const product = await Product.findOne(isId ? { _id: idOrSlug } : { slug: idOrSlug })
     .populate('collections', 'title slug')
-    .populate('relatedProducts', 'title slug images price compareAtPrice category isNew');
+    .populate('relatedProducts', 'title slug images price compareAtPrice category isNew')
+    .lean();
   if (!product) {
     res.status(404);
     throw new Error('Product not found');
@@ -62,10 +74,11 @@ export const getProduct = asyncHandler(async (req, res) => {
       category: product.category,
       _id: { $ne: product._id },
       status: 'active',
-    }).limit(8).select('title slug images price compareAtPrice category isNew');
+    }).limit(8).select('title slug images price compareAtPrice category isNew').lean();
   }
 
-  res.json({ ...product.toJSON(), relatedProducts: related });
+  res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
+  res.json({ ...withInStock(product), relatedProducts: related });
 });
 
 // GET /api/products/category-images — one representative image per category
@@ -83,6 +96,7 @@ export const categoryImages = asyncHandler(async (req, res) => {
   // Return as a map { tshirts: "url", ... }
   const map = {};
   results.forEach(({ category, image }) => { map[category] = image; });
+  res.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
   res.json(map);
 });
 

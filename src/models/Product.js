@@ -43,6 +43,13 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Compound indexes matching the hot read paths in productController.
+// (slug + status already have single-field indexes above.)
+productSchema.index({ status: 1, createdAt: -1 });               // default list + sort
+productSchema.index({ category: 1, status: 1, createdAt: -1 });  // category filter
+productSchema.index({ collections: 1, status: 1, createdAt: -1 }); // collection filter
+productSchema.index({ status: 1, isFeatured: -1, createdAt: -1 }); // featured rails
+
 productSchema.pre('save', async function (next) {
   if (this.isModified('title') || !this.slug) {
     const base = slugify(this.title, { lower: true, strict: true });
